@@ -1,0 +1,19 @@
+{
+  "name": "aws_production",
+  "version": "1.0.0",
+  "description": "assignment from GIMM deploying websites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/havenfricke/AWS_production.git"
+  },
+  "author": "Haven Fricke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/havenfricke/AWS_production/issues"
+  },
+  "homepage": "https://github.com/havenfricke/AWS_production#readme"
+}
