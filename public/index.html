@@ -7,11 +7,17 @@
 
 <body>
     <section>
-        <p>Hello World!</p>
+        <h1>Radical. You made it.</h1>
+        <h2>Lemme give some dap real quick homie</h2>
+        <button id="dapButton">Dap back</button>
+        <p id="dapMessage">That's what's good</p>
     </section>
 
     <script>
-      
+        document.getElementById('dapMessage').style.display = 'none';
+        document.getElementById('dapButton').addEventListener('click', function() {
+        document.getElementById('dapMessage').style.display = 'block';
+      });
     </script>
 </body>
 
