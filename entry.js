@@ -12,7 +12,11 @@ const pageController = new PageController();
 
 app.use(pageController.mount, pageController.router);
 
-
+app.use(express.static(__dirname + '/public'));
+//Webpage
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 
 // HEADERS, SECURITY, AND ADVANCED 
