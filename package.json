@@ -2,18 +2,23 @@
   "name": "aws_production",
   "version": "1.0.0",
   "description": "assignment from GIMM deploying websites",
-  "main": "index.js",
+  "main": "entry.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node entry.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/havenfricke/AWS_production.git"
-  },
+  "repository": "git+https://github.com/havenfricke/AWS_production.git",
   "author": "Haven Fricke",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/havenfricke/AWS_production/issues"
   },
-  "homepage": "https://github.com/havenfricke/AWS_production#readme"
+  "homepage": "https://github.com/havenfricke/AWS_production#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.2",
+    "yarn": "^1.22.22"
+  }
 }

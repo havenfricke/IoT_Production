@@ -5,7 +5,7 @@ const port = process.env.LISTENING_PORT;
 const serverOrigin = process.env.SERVER_ORIGIN;
 
 // require your controllers
-const PageController = require('./Controllers/PageController');
+const PageController = require('./Server/Controllers/PageController');
 
 // Register the mounts and routers
 const pageController = new PageController();
@@ -15,7 +15,7 @@ app.use(pageController.mount, pageController.router);
 
 
 
-// HEADERS, SECURITY, AND ADVANCED STUFF
+// HEADERS, SECURITY, AND ADVANCED 
 //________________________________________________________________________________________________________
 //________________________________________________________________________________________________________
 
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 // injection by controlling sources from where content is loaded.
   let cspSources;
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'dev') {
     cspSources = "*"; // Less restrictive in development
   } else {
     cspSources = [`'self'`, ...allowedDomains.filter(url => url !== '*')].join(' ');
