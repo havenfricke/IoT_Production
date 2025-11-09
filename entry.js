@@ -5,12 +5,12 @@ const port = process.env.LISTENING_PORT;
 const serverOrigin = process.env.SERVER_ORIGIN;
 
 // require your controllers
-const PageController = require('./Server/Controllers/PageController');
+const DataController = require('./Server/Controllers/DataController');
 
 // Register the mounts and routers
-const pageController = new PageController();
+const dataController = new DataController();
 
-app.use(pageController.mount, pageController.router);
+app.use(dataController.mount, dataController.router);
 
 app.use(express.static(__dirname + '/public'));
 //Webpage
@@ -34,7 +34,7 @@ try {
 }
 
 // allow all origins when in development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'dev') {
   allowedDomains = ['*'];
 }
 

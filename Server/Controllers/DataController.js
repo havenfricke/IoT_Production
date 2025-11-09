@@ -6,11 +6,11 @@ class DataController extends BaseController {
     super('/data')
     // Register the routes
     this.router
-      .get('', upload.none(), this.getAllData)
-      .get('/:id', upload.none(), this.getDataById)
-      .post('', upload.none(), this.createData)
-      .put('', upload.none(), this.editData)
-      .delete('/:id', upload.none(), this.deleteData)
+      .get('', this.getAllData)
+      .get('/:id', this.getDataById)
+      .post('', this.createData)
+      .put('', this.editData)
+      .delete('/:id', this.deleteData)
   }
 
   async getAllData(req, res, next) {
