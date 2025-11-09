@@ -20,7 +20,7 @@ async function createData(body) {
 }
 
 async function editData(update) {
-  const original = await DataRepository.getDataById(update.id);
+  const original = await dataRepository.getDataById(update.id);
   if (!original) {
     throw new Error("Data not found");
   }
@@ -34,7 +34,7 @@ async function editData(update) {
 }
 
 async function deleteData(id) {
-  const original = await DataRepository.getDataById(id);
+  const original = await dataRepository.getDataById(id);
   if (!original) {
     throw new Error("Data not found");
   }

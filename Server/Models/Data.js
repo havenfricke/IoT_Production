@@ -1,6 +1,7 @@
 class Data {
-    constructor(data) {
-        this.data = data;
+    constructor(deviceId, value) {
+        this.deviceId = deviceId;
+        this.value = value;
     }
 }
 

@@ -33,8 +33,8 @@ class DataController extends BaseController {
 
   async createData(req, res, next) {
     try {
-      const newdata = await dataService.createData(req.body)
-      res.status(201).json({ data: newdata })
+      const newData = await dataService.createData(req.body)
+      res.status(201).json({ data: newData })
     } catch (error) {
       next(error)
     }
