@@ -1,32 +1,35 @@
 const db = require('../DB/DbConnection');
 
 async function getAllData() {
-  const sql = 'SELECT * FROM data_entries';
-  return await db.query(sql, []);
+  const sql = 'SELECT * FROM data_entries ORDER BY create_time DESC';
+  return await db.query(sql);
 }
 
 async function getDataById(id) {
   const sql = 'SELECT * FROM data_entries WHERE id = ?';
-  const result = await db.query(sql, [id]);
-  return result[0]; // return exactly one
+  const rows = await db.query(sql, [id]);
+  return rows[0];
 }
 
-async function createData(id, body) {
-  const sql = 'INSERT INTO data_entries (id, value) VALUES (?, ?)';
-  await db.query(sql, [id, body.name]);
-  return { id, name: body.name };
+async function createData(body) {
+  const sql = `
+    INSERT INTO data_entries (create_time, device_id, data_value)
+    VALUES (NOW(), ?, ?)
+  `;
+  const result = await db.query(sql, [body.deviceId, body.value]);
+  return { id: result.insertId, ...body };
 }
 
 async function editData(id, body) {
-  const sql = 'UPDATE data_entries SET value = ? WHERE id = ?';
+  const sql = 'UPDATE data_entries SET data_value = ? WHERE id = ?';
   await db.query(sql, [body.value, id]);
-  return { value: body.value, id };
+  return { id, ...body };
 }
 
 async function deleteData(id) {
   const sql = 'DELETE FROM data_entries WHERE id = ?';
-  const result = await db.query(sql, [id]);
-  return result; 
+  await db.query(sql, [id]);
+  return { id };
 }
 
 module.exports = {

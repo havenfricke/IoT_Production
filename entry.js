@@ -61,9 +61,7 @@ app.use((req, res, next) => {
 
   if (process.env.NODE_ENV !== 'dev') {
     cspSources = "*"; // Less restrictive in development
-  } else {
-    cspSources = [`'self'`, ...allowedDomains.filter(url => url !== '*')].join(' ');
-  }
+  } 
 
   res.setHeader(
     'Content-Security-Policy',

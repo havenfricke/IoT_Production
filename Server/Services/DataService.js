@@ -1,45 +1,29 @@
 const dataRepository = require('../Repositories/DataRepository');
 const Data = require('../Models/Data');
 
-async function getAllData(queryParams) {
-  const data = await pageRepository.getAllData(queryParams);
-  return data.map(data => new Data(data.id, data.name));
+async function getAllData() {
+  const rows = await dataRepository.getAllData();
+  return rows.map(r => new Data(r.id, r.create_time, r.device_id, r.data_value));
 }
 
 async function getDataById(id) {
-  const data = await dataRepository.getDataById(id);
-  if (!data) {
-    throw new Error('data not found');
-  }
-  return new Data(data.id, data.name);
+  const row = await dataRepository.getDataById(id);
+  if (!row) throw new Error('Data not found');
+  return new Data(row.id, row.create_time, row.device_id, row.data_value);
 }
 
 async function createData(body) {
-  const created = await dataRepository.createData(id, body);
-  return new Data(created.id, created.name);
+  const created = await dataRepository.createData(body);
+  return new Data(created.id, new Date(), body.deviceId, body.value);
 }
 
-async function editData(update) {
-  const original = await dataRepository.getDataById(update.id);
-  if (!original) {
-    throw new Error("Data not found");
-  }
-
-  const updatedData = {
-    name: update.name ? update.name : original.name
-  };
-
-  const updated = await DataRepository.editData(update.id, updatedData);
-  return new Data(updated.id, updated.name);
+async function editData(id, body) {
+  const updated = await dataRepository.editData(id, body);
+  return new Data(updated.id, null, null, updated.value);
 }
 
 async function deleteData(id) {
-  const original = await dataRepository.getDataById(id);
-  if (!original) {
-    throw new Error("Data not found");
-  }
-  await DataRepository.deleteData(id);
-  return { message: "Data deleted successfully" };
+  return await dataRepository.deleteData(id);
 }
 
 module.exports = {
@@ -49,8 +33,3 @@ module.exports = {
   editData,
   deleteData
 };
-
-// the service layer acts as the heart of your 
-// application by housing the business logic, 
-// making it easier to manage, test, and evolve 
-// the application in line with business needs.

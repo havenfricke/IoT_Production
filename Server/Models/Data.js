@@ -1,8 +1,10 @@
 class Data {
-    constructor(deviceId, value) {
-        this.deviceId = deviceId;
-        this.value = value;
-    }
+  constructor(id, createTime, deviceId, dataValue) {
+    this.id = id;
+    this.createTime = createTime;
+    this.deviceId = deviceId;
+    this.dataValue = dataValue;
+  }
 }
 
 module.exports = Data;
