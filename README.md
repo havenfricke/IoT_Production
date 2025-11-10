@@ -1,12 +1,12 @@
 # IoT_production
 ## Project Structure
--Server
---Controllers
---DB (Database)
---Models
---Repositories
---Services
---Utils
+-Server\
+--Controllers\
+--DB (Database)\
+--Models\
+--Repositories\
+--Services\
+--Utils\
 -env
 
 ## Controllers
