@@ -1,23 +1,27 @@
+// DB/DbConnection.js
 const mysql = require('mysql2/promise');
 
-let connection = null;
-
-async function query(sql, params) {
-  if (!connection) {
-    connection = await mysql.createConnection({
-      host: process.env.DB_CONNECTION_STRING,
+let pool;
+function getPool() {
+  if (!pool) {
+    pool = mysql.createPool({
+      host: process.env.DB_CONNECTION_STRING, // hostname only
       port: process.env.DB_PORT,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      connectTimeout: 10000,  // 10 seconds
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
       ssl: { rejectUnauthorized: false }
     });
   }
-  const [results] = await connection.execute(sql, params);
-  return results;
+  return pool;
 }
 
-module.exports = {
-  query
-};
+async function query(sql, params) {
+  const [rows] = await getPool().execute(sql, params);
+  return rows;
+}
+
+module.exports = { query };

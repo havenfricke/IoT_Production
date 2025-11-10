@@ -7,7 +7,7 @@ CREATE TABLE data_entries(
 
 DROP TABLE IF EXISTS table_name;
 
-DELETE * FROM data_entries;
+DELETE FROM data_entries;
 ALTER TABLE data_entries AUTO_INCREMENT = 1;
 SELECT COUNT(*) AS total_rows FROM data_entries;
 
