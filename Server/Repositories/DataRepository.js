@@ -22,7 +22,15 @@ async function createData({ device_id, data_value }) {
     VALUES (NOW(), ?, ?)
   `;
   const result = await db.query(sql, [device_id, data_value]);
-  return await getById(result.insertId);
+
+  if (!result || !result.insertId) {
+    throw new Error('Insert failed: no insertId returned'); // will surface as 500 unless mapped
+  }
+  const row = await getById(result.insertId);
+  if (!row) {
+    throw new Error(`Insert succeeded but row not found (id=${result.insertId})`);
+  }
+  return row;
 }
 
 async function editData(id, { data_value }) {

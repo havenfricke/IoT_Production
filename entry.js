@@ -77,6 +77,15 @@ const dataController = new DataController();
 
 app.use(dataController.mount, dataController.router);
 
+app.use((err, req, res, next) => {
+  console.error('ERROR:', err); // shows stack + mysql error message
+  const isValidation =
+    err.message?.includes('required') ||
+    err.message?.includes('Invalid') ||
+    err.message?.includes('exceed');
+  res.status(isValidation ? 400 : 500).json({ error: err.message });
+});
+
 app.use(express.static(__dirname + '/public'));
 //Webpage
 app.get('/', (req, res) => {
