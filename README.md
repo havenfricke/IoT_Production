@@ -94,7 +94,7 @@ Within the loop() body:
 ```
 String body = "{\"device_id\": \"sensor-1\", \"data_value\": 21.5}";
 ```
-To send a dynamic value, we need to interpolate our string, "body" - snprintf() is the safest way to do this C based language.
+To send a dynamic value, we need to interpolate our string, "body" - snprintf() is the safest way to do this in C based language.
 
 Replace the above code with:
 ```
@@ -118,3 +118,5 @@ snprintf(body, sizeof(body),
 // pass values to snprintf()
 // 'body' now contains: {"device_id":"sensor-1","data_value":21.50}
 ```
+
+This will allow `value` to be updated by sensor-based logic.
