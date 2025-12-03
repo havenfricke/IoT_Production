@@ -15,7 +15,7 @@ const serverOrigin = process.env.SERVER_ORIGIN;
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
-// Single handler: handles LaunchRequest AND LatestSensorDataIntent
+// EXAMPLE INTENT HANDLER
 const LatestSensorDataIntentHandler = {
   canHandle(handlerInput) {
     const { request } = handlerInput.requestEnvelope;
