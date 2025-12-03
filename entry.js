@@ -1,108 +1,92 @@
-require('dotenv').config(); 
+require('dotenv').config();
 const express = require('express');
-const path = require('path'); // needed for res.sendFile
+const dataService = require('./Server/Services/DataService'); // uses your existing service layer
+const path = require('path');
 const app = express();
 const port = process.env.LISTENING_PORT;
 const serverOrigin = process.env.SERVER_ORIGIN;
 
+
+
+
 // ───────────────────────────────────────────────────────────
-// ALEXA INTEGRATION
+// ALEXA INTEGRATION (ONE HANDLER USING dataService)
 // ───────────────────────────────────────────────────────────
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
-// basic example handlers – swap/add your own later
-const LaunchRequestHandler = {
+// Single handler: handles LaunchRequest AND LatestSensorDataIntent
+const LatestSensorDataIntentHandler = {
   canHandle(handlerInput) {
-    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
-  },
-  handle(handlerInput) {
-    const speakOutput = 'Welcome to the sensor data skill.';
-    return handlerInput.responseBuilder
-      .speak(speakOutput)
-      .reprompt('You can ask me for sensor data.')
-      .getResponse();
-  }
-};
+    const { request } = handlerInput.requestEnvelope;
 
-const HelpIntentHandler = {
-  canHandle(handlerInput) {
-    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-      && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
-  },
-  handle(handlerInput) {
-    const speakOutput = 'You can say: give me a random sensor reading.';
-    return handlerInput.responseBuilder
-      .speak(speakOutput)
-      .reprompt(speakOutput)
-      .getResponse();
-  }
-};
+    // raw checks instead of Alexa.getRequestType / getIntentName
+    if (request.type === 'LaunchRequest') return true;
 
-const CancelAndStopIntentHandler = {
-  canHandle(handlerInput) {
-    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-      && (
-        Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent' ||
-        Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent'
-      );
-  },
-  handle(handlerInput) {
-    return handlerInput.responseBuilder
-      .speak('Goodbye!')
-      .getResponse();
-  }
-};
+    if (request.type === 'IntentRequest' &&
+        request.intent &&
+        request.intent.name === 'LatestSensorDataIntent') {
+      return true;
+    }
 
-const SessionEndedRequestHandler = {
-  canHandle(handlerInput) {
-    return Alexa.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest';
+    return false;
   },
-  handle(handlerInput) {
-    return handlerInput.responseBuilder.getResponse();
+
+  async handle(handlerInput) {
+    try {
+      const allData = await dataService.getAllData();
+
+      if (!allData || allData.length === 0) {
+        const speakOutput = 'There is no sensor data available yet.';
+        return handlerInput.responseBuilder
+          .speak(speakOutput)
+          .getResponse();
+      }
+
+      const latest = allData[0]; // newest due to ORDER BY create_time DESC
+
+      const speakOutput =
+        `The latest sensor reading is from device ${latest.deviceId}, ` +
+        `with a value of ${latest.dataValue}.`;
+
+      return handlerInput.responseBuilder
+        .speak(speakOutput)
+        .getResponse();
+
+    } catch (err) {
+      console.error('LatestSensorDataIntent error:', err);
+      // Let global error handler speak a generic message
+      throw err;
+    }
   }
 };
 
 const ErrorHandler = {
-  canHandle() {
-    return true;
-  },
+  canHandle() { return true; },
   handle(handlerInput, error) {
     console.error('Alexa Error:', error);
-    const speakOutput = 'Sorry, something went wrong.';
     return handlerInput.responseBuilder
-      .speak(speakOutput)
+      .speak('Sorry, something went wrong.')
       .reprompt('Please try again.')
       .getResponse();
   }
 };
 
-// this is the "const skill = ..." from your screenshot
+// Build the Alexa skill with ONLY that one handler
 const skill = Alexa.SkillBuilders.custom()
-  .addRequestHandlers(
-    LaunchRequestHandler,
-    HelpIntentHandler,
-    CancelAndStopIntentHandler,
-    SessionEndedRequestHandler
-    // add your custom intent handlers here
-  )
+  .addRequestHandlers(LatestSensorDataIntentHandler)
   .addErrorHandlers(ErrorHandler)
   .create();
 
-// this is the "const adapter = new ExpressAdapter(skill, false, false)"
-// false, false = disable signature/timestamp verification (fine for local dev)
+// Adapter for Express
 const adapter = new ExpressAdapter(skill, false, false);
 
-// ───────────────────────────────────────────────────────────
-// ALEXA INTEGRATION END
-// ───────────────────────────────────────────────────────────
+
 
 
 // ───────────────────────────────────────────────────────────
 // HEADERS, SECURITY, AND ADVANCED 
 // ───────────────────────────────────────────────────────────
-
-// allowed domains from the environment variable
 let allowedDomains = [];
 
 try {
@@ -120,7 +104,6 @@ if (process.env.NODE_ENV !== 'dev') {
 app.use((req, res, next) => {
   const requestOrigin = req.headers.origin;
 
-  // allow only specific origins. in development, allow all.
   if (allowedDomains.includes('*') || allowedDomains.includes(requestOrigin)) {
     res.setHeader('Access-Control-Allow-Origin', allowedDomains.includes('*') ? '*' : requestOrigin);
   }
@@ -147,7 +130,6 @@ app.use((req, res, next) => {
     `default-src ${cspSources}; script-src ${cspSources}; style-src ${cspSources}`
   );
 
-  // allows browser to receive necessary headers
   if (req.method === 'OPTIONS') {
     return res.sendStatus(204);
   }
@@ -156,12 +138,7 @@ app.use((req, res, next) => {
 });
 
 // ───────────────────────────────────────────────────────────
-// HEADERS, SECURITY, AND ADVANCED END
-// ───────────────────────────────────────────────────────────
-
-// ───────────────────────────────────────────────────────────
 // ALEXA ROUTE – IMPORTANT: BEFORE express.json()
-// This is the skill endpoint: POST https://aws-production.onrender/alexa
 // ───────────────────────────────────────────────────────────
 app.post('/alexa', adapter.getRequestHandlers());
 
@@ -193,7 +170,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// this is your existing listen, instead of the sample's app.listen(3000)
 app.listen(port, () => {
   console.log(`Server is running on ${serverOrigin}:${port}`);
 });
