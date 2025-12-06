@@ -16,12 +16,12 @@ async function getDataById(id) {
   return await getById(id);
 }
 
-async function createData({ device_id, data_value }) {
+async function createData({ device_id, distance_cm, pitch_deg, roll_deg, yaw_deg }) {
   const sql = `
-    INSERT INTO data_entries (create_time, device_id, data_value)
-    VALUES (NOW(), ?, ?)
+    INSERT INTO data_entries (create_time, device_id, distance_cm, pitch_deg, roll_deg, yaw_deg)
+    VALUES (NOW(), ?, ?, ?, ?, ?)
   `;
-  const result = await db.query(sql, [device_id, data_value]);
+  const result = await db.query(sql, [device_id, distance_cm, pitch_deg, roll_deg, yaw_deg]);
 
   if (!result || !result.insertId) {
     throw new Error('Insert failed: no insertId returned'); // will surface as 500 unless mapped
@@ -33,9 +33,9 @@ async function createData({ device_id, data_value }) {
   return row;
 }
 
-async function editData(id, { data_value }) {
-  const sql = 'UPDATE data_entries SET data_value = ? WHERE id = ?';
-  const result = await db.query(sql, [data_value, id]);
+async function editData(id, { device_id }) {
+  const sql = 'UPDATE data_entries SET device_id = ? WHERE id = ?';
+  const result = await db.query(sql, [device_id, id]);
   const row = await getById(id);
   return row; 
 }
