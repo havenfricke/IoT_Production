@@ -14,6 +14,10 @@ const app = express();
 const port = process.env.LISTENING_PORT || 3000;
 const serverOrigin = process.env.SERVER_ORIGIN;
 
+const AlexaController = require('./Server/Controllers/AlexaController');
+const alexaController = new AlexaController();
+app.use(alexaController.mount, alexaController.router);
+
 // HEADERS, SECURITY, AND ADVANCED 
 //________________________________________________________________________________________________________
 //________________________________________________________________________________________________________
@@ -80,13 +84,11 @@ app.use(express.urlencoded({ extended: true }));
 
 // require your controllers
 const DataController = require('./Server/Controllers/DataController');
-const AlexaController = require('./Server/Controllers/AlexaController');
 
 const dataController = new DataController();
-const alexaController = new AlexaController();
 
 app.use(dataController.mount, dataController.router);
-app.use(alexaController.mount, alexaController.router);
+
 
 // ─────────────────────────────────────────────
 // STATIC FILES + ROOT ROUTE
