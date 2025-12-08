@@ -275,7 +275,14 @@ const skill = Alexa.SkillBuilders.custom()
 const alexaAdapter = new ExpressAdapter(skill, false, false);
 
 // Alexa endpoint: POST https://aws-production.onrender.com/alexa
-app.post('/alexa', alexaAdapter.getRequestHandlers());
+// Added logging for debugging -- Aidan
+app.post('/alexa', (req, res, next) => {
+  console.log('POST /alexa received:', {
+    headers: req.headers,
+    bodyKeys: Object.keys(req.body)
+  });
+  next();
+}, alexaAdapter.getRequestHandlers());
 
 // ─────────────────────────────────────────────
 // STATIC FILES + ROOT ROUTE
