@@ -6,14 +6,12 @@ const dataService = require('../Services/DataService');
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
 
-
 class AlexaController extends BaseController {
   constructor() {
     // Mount at /alexa
     super('/alexa');
     this.router
-        .post('', alexaAdapter.getRequestHandlers())
-        .get('', (req, res) => {res.send('Alexa endpoint is alive. Use POST (from Alexa) to talk to it.');}); 
+        
     // ─────────────────────────────────────────────
     // Intent Handlers (your skill code)
     // ─────────────────────────────────────────────
@@ -199,7 +197,16 @@ class AlexaController extends BaseController {
       .withCustomUserAgent('aws-production/iot-skill/v1')
       .create();
 
-      const alexaAdapter = new ExpressAdapter(skill, false, false);
+    // Hook the skill into Express
+    const alexaAdapter = new ExpressAdapter(skill, false, false);
+
+    // POST /alexa  (this is the endpoint you set in the Alexa console)
+    this.router.post('', alexaAdapter.getRequestHandlers());
+
+    // Optional: simple GET to confirm the endpoint is up in a browser
+    this.router.get('', (req, res) => {
+      res.send('Alexa endpoint is alive. Use POST (from Alexa) to talk to it.');
+    });
   }
 }
 
