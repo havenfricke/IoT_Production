@@ -5,7 +5,7 @@ const dataService = require('../Services/DataService');
 
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
-const alexaAdapter = new ExpressAdapter(skill, false, false);
+
 
 class AlexaController extends BaseController {
   constructor() {
@@ -198,6 +198,8 @@ class AlexaController extends BaseController {
       .addErrorHandlers(ErrorHandler)
       .withCustomUserAgent('aws-production/iot-skill/v1')
       .create();
+
+      const alexaAdapter = new ExpressAdapter(skill, false, false);
   }
 }
 
