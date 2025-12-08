@@ -98,7 +98,6 @@ const RandomSensorDataIntentHandler = {
       Alexa.getIntentName(handlerInput.requestEnvelope) === 'RandomSensorDataIntent'
     );
   },
-
   async handle(handlerInput) {
     try {
       // Pull all data rows from your DB via DataService
@@ -108,7 +107,6 @@ const RandomSensorDataIntentHandler = {
         const speakOutput = 'There is currently no sensor data available.';
         return handlerInput.responseBuilder.speak(speakOutput).getResponse();
       }
-
       // Pick a random row
       const randomIndex = Math.floor(Math.random() * rows.length);
       const row = rows[randomIndex];
@@ -126,6 +124,122 @@ const RandomSensorDataIntentHandler = {
     }
   },
 };
+// Added rest of basic intents --Aidan
+const LaunchRequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Welcome, you can say Hello or Help. Which would you like to try?';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const HelloWorldIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'HelloWorldIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Hello World!';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .getResponse();
+    }
+};
+
+//Testing new intentHandler
+const TestIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'TestIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'This is a test intent. Everything is working correctly!';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .getResponse();
+    }
+};
+
+const HelpIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'You can say hello to me! How can I help?';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const CancelAndStopIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && (Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+                || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Goodbye!';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+    }
+};
+
+const FallbackIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.FallbackIntent';
+    },
+    handle(handlerInput) {
+        const speakOutput = 'Sorry, I don\'t know about that. Please try again.';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+    }
+};
+
+const SessionEndedRequestHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest';
+    },
+    handle(handlerInput) {
+        console.log(`~~~~ Session ended: ${JSON.stringify(handlerInput.requestEnvelope)}`);
+        // Any cleanup logic goes here.
+        return handlerInput.responseBuilder.getResponse(); // notice we send an empty response
+    }
+};
+
+const IntentReflectorHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest';
+    },
+    handle(handlerInput) {
+        const intentName = Alexa.getIntentName(handlerInput.requestEnvelope);
+        const speakOutput = `You just triggered ${intentName}`;
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .getResponse();
+    }
+};
 
 // Basic error handler for Alexa
 const ErrorHandler = {
@@ -141,9 +255,18 @@ const ErrorHandler = {
   },
 };
 
-// Build the Alexa skill (this is the "const skill = ..." from your screenshot)
+// Build the Alexa skill (this is the "const skill = ..." from your screenshot) + Added Skills -- Aidan
 const skill = Alexa.SkillBuilders.custom()
-  .addRequestHandlers(RandomSensorDataIntentHandler)
+  .addRequestHandlers(
+  RandomSensorDataIntentHandler,
+  LaunchRequestHandler,
+  HelloWorldIntentHandler,
+  TestIntentHandler,
+  HelpIntentHandler,
+  CancelAndStopIntentHandler,
+  FallbackIntentHandler,
+  SessionEndedRequestHandler,
+  IntentReflectorHandler)
   .addErrorHandlers(ErrorHandler)
   .withCustomUserAgent('aws-production/iot-skill/v1')
   .create();
