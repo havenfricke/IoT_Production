@@ -16,6 +16,22 @@ class AlexaController extends BaseController {
     // Intent Handlers (your skill code)
     // ─────────────────────────────────────────────
 
+    // Added rest of basic intents --Aidan
+    const LaunchRequestHandler = {
+      canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
+      },
+      handle(handlerInput) {
+        const speakOutput =
+          'Welcome, you can say Hello, Test, or ask for sensor data. Which would you like to try?';
+
+        return handlerInput.responseBuilder
+          .speak(speakOutput)
+          .reprompt(speakOutput)
+          .getResponse();
+      },
+    };
+
     // Single intent handler example that uses your DataService
     const RandomSensorDataIntentHandler = {
       canHandle(handlerInput) {
@@ -40,8 +56,9 @@ class AlexaController extends BaseController {
           const row = rows[randomIndex];
 
           const speakOutput =
-            'Here is some data from your sensors. ' +
-            `Sensor with device ID ${row.deviceId} has a value of ${row.dataValue}.`;
+            'Here is all the data sir. ' +
+            `Sensor with device ID ${row.deviceId} distance of ${row.distanceCm}, 
+            pitch of ${row.pitchDeg}, roll of ${row.rollDeg}, and yaw of ${row.yawDeg}.`;
 
           return handlerInput.responseBuilder.speak(speakOutput).getResponse();
         } catch (err) {
@@ -51,22 +68,6 @@ class AlexaController extends BaseController {
 
           return handlerInput.responseBuilder.speak(speakOutput).getResponse();
         }
-      },
-    };
-
-    // Added rest of basic intents --Aidan
-    const LaunchRequestHandler = {
-      canHandle(handlerInput) {
-        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
-      },
-      handle(handlerInput) {
-        const speakOutput =
-          'Welcome, you can say Hello, Test, or ask for sensor data. Which would you like to try?';
-
-        return handlerInput.responseBuilder
-          .speak(speakOutput)
-          .reprompt(speakOutput)
-          .getResponse();
       },
     };
 
@@ -183,8 +184,8 @@ class AlexaController extends BaseController {
     // Build the Alexa skill 
     const skill = Alexa.SkillBuilders.custom()
       .addRequestHandlers(
-        RandomSensorDataIntentHandler,
         LaunchRequestHandler,
+        RandomSensorDataIntentHandler,
         HelloWorldIntentHandler,
         TestIntentHandler,
         HelpIntentHandler,
