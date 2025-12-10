@@ -3,7 +3,7 @@ const dataService = require('../Services/DataService');
 
 class DataController extends BaseController {
   constructor() {
-    super('/data'); // ensure app uses app.use('/api', new DataController().router)
+    super('/data/all'); // ensure app uses app.use('/api', new DataController().router)
     this.router
       .get('', this.getAllData)
       .get('/:id', this.getDataById)
