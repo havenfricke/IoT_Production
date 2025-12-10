@@ -1,7 +1,7 @@
 // Server/Controllers/AlexaController.js
 
 const BaseController = require('../Utils/BaseController');
-const dataService = require('../Services/DataService');
+const dataService = require('../Services/GyroDataService');
 
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');

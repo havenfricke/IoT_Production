@@ -84,11 +84,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // require your controllers
 const DataController = require('./Server/Controllers/DataController');
+const GyroDataController = require('./Server/Controllers/GyroDataController');
+const LidarDataController = require('./Server/Controllers/LidarDataController');
 
 const dataController = new DataController();
+const gyroDataController = new GyroDataController();
+const lidarDataController = new LidarDataController();
 
 app.use(dataController.mount, dataController.router);
-
+app.use(gyroDataController.mount, gyroDataController.router);
+app.use(lidarDataController.mount, lidarDataController.router);
 
 // ─────────────────────────────────────────────
 // STATIC FILES + ROOT ROUTE
