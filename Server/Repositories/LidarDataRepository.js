@@ -1,19 +1,15 @@
 // Repositories/DataRepository.js
 const db = require('../DB/DbConnection');
 
-async function getById(id) {
-  const sql = 'SELECT * FROM lidar_data_entries WHERE id = ?';
-  const rows = await db.query(sql, [id]); 
-  return rows[0];
-}
-
 async function getAllData() {
   const sql = 'SELECT * FROM lidar_data_entries ORDER BY create_time DESC';
   return await db.query(sql);
 }
 
 async function getDataById(id) {
-  return await getById(id);
+  const sql = 'SELECT * FROM lidar_data_entries WHERE id = ?';
+  const rows = await db.query(sql, [id]); 
+  return rows[0];
 }
 
 async function createData({ device_id, distance_cm }) {

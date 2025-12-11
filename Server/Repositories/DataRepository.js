@@ -1,19 +1,42 @@
 // Repositories/DataRepository.js
 const db = require('../DB/DbConnection');
 
-async function getById(id) {
-  const sql = 'SELECT * FROM data_entries WHERE id = ?';
-  const rows = await db.query(sql, [id]); 
-  return rows[0];
-}
-
 async function getAllData() {
-  const sql = 'SELECT * FROM data_entries ORDER BY create_time DESC';
-  return await db.query(sql);
+  const sql = `
+    SELECT
+      l.id,
+      l.device_id,
+      l.create_time AS lidar_create_time,
+      g.create_time AS gyro_create_time,
+      l.distance_cm,
+      g.pitch_deg,
+      g.roll_deg,
+      g.yaw_deg
+    FROM lidar_data_entries AS l
+    JOIN gyro_data_entries AS g ON g.id = l.id
+    ORDER BY g.create_time DESC
+  `;
+  const rows = await db.query(sql);
+  return rows;
 }
 
 async function getDataById(id) {
-  return await getById(id);
+  const sql = `
+  SELECT
+      l.id,
+      l.device_id,
+      l.create_time AS lidar_create_time,
+      g.create_time AS gyro_create_time,
+      l.distance_cm,
+      g.pitch_deg,
+      g.roll_deg,
+      g.yaw_deg
+  FROM lidar_data_entries AS l
+  JOIN gyro_data_entries AS g ON g.id = l.id
+  WHERE l.id = ?
+  `;
+  const rows = await db.query(sql, [id]); 
+  return rows[0];
 }
 
 async function createData({ device_id, distance_cm, pitch_deg, roll_deg, yaw_deg }) {
