@@ -6,7 +6,7 @@ class DataController extends BaseController {
     super('/data'); // ensure app uses app.use('/api', new DataController().router)
     this.router
       .get('', this.getAllData)
-      .get('/:id', this.getDataById)
+      .get('/id/:id', this.getDataById)
       // .post('', this.createData)
       // .put('/:id', this.editData)
       // .delete('/:id', this.deleteData);
