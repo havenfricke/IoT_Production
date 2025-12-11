@@ -1,7 +1,9 @@
 // Server/Controllers/AlexaController.js
 
 const BaseController = require('../Utils/BaseController');
-const dataService = require('../Services/GyroDataService');
+const dataService = require('../Services/DataService');
+// const gyroDataService = require('../Services/GyroDataService');
+// const lidarDataService = require('../Services/LidarDataService');
 
 const Alexa = require('ask-sdk-core');
 const { ExpressAdapter } = require('ask-sdk-express-adapter');
@@ -45,6 +47,8 @@ class AlexaController extends BaseController {
 
           // Pull all data rows from your DB via DataService
           const rows = await dataService.getAllData();
+          // const lidarRows = await lidarDataService.getAllData();
+          // const gyroRows = await gyroDataService.getAllData();
 
           if (!rows || rows.length === 0) {
             const speakOutput = 'There is currently no sensor data available.';
