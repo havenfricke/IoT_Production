@@ -75,6 +75,146 @@ class AlexaController extends BaseController {
       },
     };
 
+    // Gets the most recent sensor data (latest by create_time DESC)
+    const GetSensorDataIntentHandler = {
+      canHandle(handlerInput) {
+        return (
+          Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+          Alexa.getIntentName(handlerInput.requestEnvelope) === 'GetSensorDataIntent'
+        );
+      },
+      async handle(handlerInput) {
+        try {
+          const rows = await dataService.getAllData(); // ordered DESC by create_time
+          if (!rows || rows.length === 0) {
+            const speakOutput = 'There is currently no sensor data available.';
+            return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+          }
+          const row = rows[0];
+          const speakOutput =
+            `Most recent reading is from device ${row.deviceId}. ` +
+            `Distance ${row.distanceCm} centimeters, ` +
+            `Pitch ${row.pitchDeg} degrees, ` +
+            `Roll ${row.rollDeg} degrees, ` +
+            `Yaw ${row.yawDeg} degrees.`;
+
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        } catch (err) {
+          console.error('GetSensorDataIntent error:', err);
+          const speakOutput = 'Sorry, I had trouble getting the latest sensor data.';
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        }
+      }
+    };
+
+    // Create sensor data (expects slots: deviceId, distanceCm, pitchDeg, rollDeg, yawDeg)
+    const CreateSensorDataIntentHandler = {
+      canHandle(handlerInput) {
+        return (
+          Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+          Alexa.getIntentName(handlerInput.requestEnvelope) === 'CreateSensorDataIntent'
+        );
+      },
+      
+      async handle(handlerInput) {
+        try {
+          const slots = handlerInput.requestEnvelope.request.intent?.slots || {};
+          const deviceId = slots.deviceId?.value;
+          const distanceCm = slots.distanceCm?.value;
+          const pitchDeg = slots.pitchDeg?.value;
+          const rollDeg = slots.rollDeg?.value;
+          const yawDeg = slots.yawDeg?.value;
+
+          if (!deviceId || distanceCm == null || pitchDeg == null || rollDeg == null || yawDeg == null) {
+            const speakOutput = 'Please provide device id, distance, pitch, roll, and yaw to create a sensor entry.';
+            return handlerInput.responseBuilder.speak(speakOutput).reprompt(speakOutput).getResponse();
+          }
+
+          const body = {
+            device_id: deviceId,
+            distance_cm: Number(distanceCm),
+            pitch_deg: Number(pitchDeg),
+            roll_deg: Number(rollDeg),
+            yaw_deg: Number(yawDeg)
+          };
+
+          const created = await dataService.createData(body);
+          const speakOutput =
+            `Created entry for device ${created.deviceId}. ` +
+            `Distance ${created.distanceCm} centimeters, ` +
+            `Pitch ${created.pitchDeg} degrees, ` +
+            `Roll ${created.rollDeg} degrees, ` +
+            `Yaw ${created.yawDeg} degrees.`;
+
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        } catch (err) {
+          console.error('CreateSensorDataIntent error:', err);
+          const speakOutput = 'Sorry, I could not create the sensor entry.';
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        }
+      }
+    };
+
+    // Update sensor data: change device_id for a given sensor entry id
+    // Slots expected: sensorId (AMAZON.NUMBER), newDeviceId (string)
+    const UpdateSensorDataIntentHandler = {
+      canHandle(handlerInput) {
+        return (
+          Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+          Alexa.getIntentName(handlerInput.requestEnvelope) === 'UpdateSensorDataIntent'
+        );
+      },
+      async handle(handlerInput) {
+        try {
+          const slots = handlerInput.requestEnvelope.request.intent?.slots || {};
+          const sensorId = slots.sensorId?.value;
+          const newDeviceId = slots.newDeviceId?.value;
+
+          if (!sensorId || !newDeviceId) {
+            const speakOutput = 'Please provide the sensor entry ID and the new device ID.';
+            return handlerInput.responseBuilder.speak(speakOutput).reprompt(speakOutput).getResponse();
+          }
+
+          const updated = await dataService.editData(Number(sensorId), { device_id: newDeviceId });
+          const speakOutput = `Updated entry ${updated.id} to device ${updated.deviceId}.`;
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        } catch (err) {
+          console.error('UpdateSensorDataIntent error:', err);
+          const speakOutput = 'Sorry, I could not update that sensor entry.';
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        }
+      }
+    };
+
+    // Delete the most recent sensor entry (latest by create time from DataService)
+    const DeleteSensorDataIntentHandler = {
+      canHandle(handlerInput) {
+        return (
+          Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' &&
+          Alexa.getIntentName(handlerInput.requestEnvelope) === 'DeleteSensorDataIntent'
+        );
+      },
+      async handle(handlerInput) {
+        try {
+          const rows = await dataService.getAllData(); //Gets all data
+          if (!rows || rows.length === 0) {
+            const speakOutput = 'There is no sensor data to delete.';
+            return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+          }
+
+          const latest = rows[0];
+          await dataService.deleteData(latest.id);
+
+          const speakOutput = `Deleted the most recent entry: id ${latest.id} from device ${latest.deviceId}.`;
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        } catch (err) {
+          console.error('DeleteSensorDataIntent error:', err);
+          const speakOutput = 'Sorry, I could not delete the sensor entry.';
+          return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+        }
+      }
+    };
+
     const HelloWorldIntentHandler = {
       canHandle(handlerInput) {
         return (
@@ -192,6 +332,10 @@ class AlexaController extends BaseController {
         RandomSensorDataIntentHandler,
         HelloWorldIntentHandler,
         TestIntentHandler,
+        GetSensorDataIntentHandler,
+        CreateSensorDataIntentHandler,
+        UpdateSensorDataIntentHandler,
+        DeleteSensorDataIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         FallbackIntentHandler,
