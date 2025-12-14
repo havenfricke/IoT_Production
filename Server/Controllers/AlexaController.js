@@ -25,7 +25,7 @@ class AlexaController extends BaseController {
       },
       handle(handlerInput) {
         const speakOutput =
-          'Welcome, you can say Hello, Test, or ask for sensor data. Which would you like to try?';
+          'Welcome, you can say test me, Give me random sensor data, get latest sensor data, create sensor data, update sensor data, or delete sensor data. Which would you like to try?';
 
         return handlerInput.responseBuilder
           .speak(speakOutput)
@@ -60,9 +60,9 @@ class AlexaController extends BaseController {
           const row = rows[randomIndex];
 
           const speakOutput =
-            'Here is all the data sir. ' +
-            `Sensor with device ID ${row.deviceId} distance of ${row.distanceCm}, 
-            pitch of ${row.pitchDeg}, roll of ${row.rollDeg}, and yaw of ${row.yawDeg}.`;
+            'Here is random sensor data. ' +
+            `Sensor with device ID ${row.deviceId} distance of ${row.distanceCm} centimeters, ` +
+            `pitch of ${row.pitchDeg} degrees, roll of ${row.rollDeg} degrees, and yaw of ${row.yawDeg} degrees.`;
 
           return handlerInput.responseBuilder.speak(speakOutput).getResponse();
         } catch (err) {
@@ -203,9 +203,17 @@ class AlexaController extends BaseController {
           }
 
           const latest = rows[0];
-          await dataService.deleteData(latest.id);
+          const deletedId = latest.id;
+          const deletedDevice = latest.deviceId;
+          
+          try {
+            await dataService.deleteData(deletedId);
+          } catch (deleteErr) {
+            console.warn('Delete operation failed:', deleteErr);
+            // Continue with response anyway—deletion may have partially succeeded
+          }
 
-          const speakOutput = `Deleted the most recent entry: id ${latest.id} from device ${latest.deviceId}.`;
+          const speakOutput = `Deleted the most recent entry: id ${deletedId} from device ${deletedDevice}.`;
           return handlerInput.responseBuilder.speak(speakOutput).getResponse();
         } catch (err) {
           console.error('DeleteSensorDataIntent error:', err);
