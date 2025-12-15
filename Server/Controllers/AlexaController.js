@@ -45,19 +45,20 @@ class AlexaController extends BaseController {
       async handle(handlerInput) {
         try {
 
-          // Pull all data rows from your DB via DataService
+          // Get all data to find available IDs
           const rows = await dataService.getAllData();
-          // const lidarRows = await lidarDataService.getAllData();
-          // const gyroRows = await gyroDataService.getAllData();
 
           if (!rows || rows.length === 0) {
             const speakOutput = 'There is currently no sensor data available.';
             return handlerInput.responseBuilder.speak(speakOutput).getResponse();
           }
 
-          // Pick a random row
+          // Pick a random ID from available entries
           const randomIndex = Math.floor(Math.random() * rows.length);
-          const row = rows[randomIndex];
+          const randomId = rows[randomIndex].id;
+
+          // Fetch the specific row by ID
+          const row = await dataService.getDataById(randomId);
 
           const speakOutput =
             'Here is random sensor data. ' +
@@ -107,6 +108,7 @@ class AlexaController extends BaseController {
       }
     };
 
+    //Currently bricked - commented out in DataService and DataRepository
     // Create sensor data (expects slots: deviceId, distanceCm, pitchDeg, rollDeg, yawDeg)
     const CreateSensorDataIntentHandler = {
       canHandle(handlerInput) {
@@ -156,7 +158,7 @@ class AlexaController extends BaseController {
     };
 
     // Update sensor data: change device_id for a given sensor entry id
-    // Slots expected: sensorId (AMAZON.NUMBER), newDeviceId (string)
+    // Slots expected: sensorId (AMAZON.NUMBER), newDeviceId (DEVICE_ID) Custom slot
     const UpdateSensorDataIntentHandler = {
       canHandle(handlerInput) {
         return (
@@ -164,11 +166,12 @@ class AlexaController extends BaseController {
           Alexa.getIntentName(handlerInput.requestEnvelope) === 'UpdateSensorDataIntent'
         );
       },
+
       async handle(handlerInput) {
         try {
-          const slots = handlerInput.requestEnvelope.request.intent?.slots || {};
-          const sensorId = slots.sensorId?.value;
-          const newDeviceId = slots.newDeviceId?.value;
+          const slots = handlerInput.requestEnvelope.request.intent?.slots || {}; //array for the slots
+          const sensorId = slots.sensorId?.value; //current sensor id to update
+          const newDeviceId = slots.newDeviceId?.value; //new device id to set
 
           if (!sensorId || !newDeviceId) {
             const speakOutput = 'Please provide the sensor entry ID and the new device ID.';
