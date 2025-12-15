@@ -13,28 +13,58 @@ class GyroDataController extends BaseController {
   }
 
   async getAllData(req, res, next) {
-    try { res.json({ data: await gyroDataService.getAllData() }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await gyroDataService.getAllData() 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async getDataById(req, res, next) {
-    try { res.json({ data: await gyroDataService.getDataById(req.params.id) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await gyroDataService.getDataById(req.params.id) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async createData(req, res, next) {
-    try { res.status(201).json({ data: await gyroDataService.createData(req.body) }); }
-    catch (err) { next(err); }
+    try { 
+      res.status(201).json({ 
+        data: await gyroDataService.createData(req.body) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async editData(req, res, next) {
-    try { res.json({ data: await gyroDataService.editData(req.params.id, req.body) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await gyroDataService.editData(req.params.id, req.body) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async deleteData(req, res, next) {
-    try { res.json({ result: await gyroDataService.deleteData(req.params.id) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        result: await gyroDataService.deleteData(req.params.id) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 }
 

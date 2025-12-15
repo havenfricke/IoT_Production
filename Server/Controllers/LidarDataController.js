@@ -13,28 +13,58 @@ class LidarDataController extends BaseController {
   }
 
   async getAllData(req, res, next) {
-    try { res.json({ data: await lidarDataService.getAllData() }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await lidarDataService.getAllData() 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async getDataById(req, res, next) {
-    try { res.json({ data: await lidarDataService.getDataById(req.params.id) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await lidarDataService.getDataById(req.params.id) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async createData(req, res, next) {
-    try { res.status(201).json({ data: await lidarDataService.createData(req.body) }); }
-    catch (err) { next(err); }
+    try { 
+      res.status(201).json({ 
+        data: await lidarDataService.createData(req.body) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async editData(req, res, next) {
-    try { res.json({ data: await lidarDataService.editData(req.params.id, req.body) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        data: await lidarDataService.editData(req.params.id, req.body) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 
   async deleteData(req, res, next) {
-    try { res.json({ result: await lidarDataService.deleteData(req.params.id) }); }
-    catch (err) { next(err); }
+    try { 
+      res.json({ 
+        result: await lidarDataService.deleteData(req.params.id) 
+      }); 
+    }
+    catch (err) { 
+      next(err); 
+    }
   }
 }
 

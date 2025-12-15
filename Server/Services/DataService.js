@@ -12,10 +12,10 @@ async function getDataById(id) {
   return new Data(row.id, row.lidar_create_time, row.gyro_create_time, row.device_id, row.distance_cm, row.pitch_deg, row.roll_deg, row.yaw_deg);
 }
 
-async function createData(body) {
-  const row = await dataRepository.createData(body); // returns full row
-  return new Data(row.id, row.lidar_create_time, row.gyro_create_time, row.device_id, row.distance_cm, row.pitch_deg, row.roll_deg, row.yaw_deg);
-}
+// async function createData(body) {
+//   const row = await dataRepository.createData(body); // returns full row
+//   return new Data(row.id, row.lidar_create_time, row.gyro_create_time, row.device_id, row.distance_cm, row.pitch_deg, row.roll_deg, row.yaw_deg);
+// }
 
 async function editData(id, body) {
   const row = await dataRepository.editData(id, body);
