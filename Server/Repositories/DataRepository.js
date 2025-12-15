@@ -57,21 +57,25 @@ async function getDataById(id) {
 // }
 
 async function editData(id, { device_id }) {
-  const sql = `
-  UPDATE gyro_data_entries, lidar_data_entries 
-  SET device_id = ? 
-  WHERE id = ?`;
-  const result = await db.query(sql, [device_id, id]);
-  const row = await getById(id);
-  return row; 
+  await db.query(
+    `UPDATE gyro_data_entries SET device_id = ? WHERE id = ?`,
+    [device_id, id]
+  );
+
+  await db.query(
+    `UPDATE lidar_data_entries SET device_id = ? WHERE id = ?`,
+    [device_id, id]
+  );
+
+  return getDataById(id);
 }
 
+
 async function deleteData(id) {
-  const sql = `
-  DELETE FROM gyro_data_entries, lidar_data_entries 
-  WHERE id = ?`;
-  await db.query(sql, [id]);
+  await db.query(`DELETE FROM gyro_data_entries WHERE id = ?`, [id]);
+  await db.query(`DELETE FROM lidar_data_entries WHERE id = ?`, [id]);
   return { id };
 }
+
 
 module.exports = { getAllData, getDataById, editData, deleteData };
