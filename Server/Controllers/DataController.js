@@ -8,8 +8,8 @@ class DataController extends BaseController {
       .get('', this.getAllData)
       .get('/id/:id', this.getDataById)
       // .post('', this.createData)
-      .put('/:id', this.editData)
-      .delete('/:id', this.deleteData);
+      .put('/id/:id', this.editData)
+      .delete('/id/:id', this.deleteData);
   }
 
   async getAllData(req, res, next) {
