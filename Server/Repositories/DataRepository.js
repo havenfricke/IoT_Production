@@ -74,4 +74,4 @@ async function deleteData(id) {
   return { id };
 }
 
-module.exports = { getAllData, getDataById, createData, editData, deleteData };
+module.exports = { getAllData, getDataById, editData, deleteData };
