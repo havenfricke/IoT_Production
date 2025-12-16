@@ -22,7 +22,7 @@ async function createData({ device_id, distance_cm }) {
   if (!result || !result.insertId) {
     throw new Error('Insert failed: no insertId returned'); // will surface as 500 unless mapped
   }
-  const row = await getById(result.insertId);
+  const row = await getDataById(result.insertId);
   if (!row) {
     throw new Error(`Insert succeeded but row not found (id=${result.insertId})`);
   }

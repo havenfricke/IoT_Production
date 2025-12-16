@@ -22,7 +22,7 @@ async function createData({ device_id, pitch_deg, roll_deg, yaw_deg }) {
   if (!result || !result.insertId) {
     throw new Error('Insert failed: no insertId returned'); // will surface as 500 unless mapped
   }
-  const row = await getById(result.insertId);
+  const row = await getDataById(result.insertId);
   if (!row) {
     throw new Error(`Insert succeeded but row not found (id=${result.insertId})`);
   }
