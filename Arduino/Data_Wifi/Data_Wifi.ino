@@ -5,8 +5,8 @@
 #include <ArduinoHttpClient.h>
 
 // ====== WIFI SETTINGS ======
-char ssid[] = "NIGHTHAWK-2G";       //WiFi SSID
-char pass[] = "ButtCheekOnAStick";  //WiFi password
+char ssid[] = "WiFi Name";       //WiFi SSID
+char pass[] = "WiFi Password";  //WiFi password
 
 // ====== HTTP / SERVER SETTINGS ======
 const char server[] = "aws-production.onrender.com";

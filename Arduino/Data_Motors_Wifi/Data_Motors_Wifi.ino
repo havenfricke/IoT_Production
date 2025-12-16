@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 // ====== WIFI SETTINGS ======
-char ssid[] = "NIGHTHAWK-2G";       
-char pass[] = "ButtCheekOnAStick";  
+char ssid[] = "WiFi Name";       
+char pass[] = "WiFi Password";  
 
 // ====== HTTP / SERVER SETTINGS ======
 const char server[] = "aws-production.onrender.com";
