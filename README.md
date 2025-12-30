@@ -89,11 +89,11 @@ void loop() {
 }
 ```
 ## Arduino Code
-Within the loop() body:
-```
-String body = "{\"device_id\": \"sensor-1\", \"data_value\": 21.5}";
-```
-To send a dynamic value, we need to interpolate our string, "body" - snprintf() is the safest way to do this in C based language.
+Within the `loop()` body:
+
+`String body = "{\"device_id\": \"sensor-1\", \"data_value\": 21.5}";`
+
+To send a dynamic value, we need to interpolate our string, "body" - `snprintf()` is the safest way to do this in C based language.
 
 Replace the above code with:
 ```
