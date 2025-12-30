@@ -117,5 +117,4 @@ snprintf(body, sizeof(body),
 // pass values to snprintf()
 // 'body' now contains: {"device_id":"sensor-1","data_value":21.50}
 ```
-
-This will allow `value` to be updated by sensor-based logic.
+This allows `value` to be updated by sensor-based logic.
